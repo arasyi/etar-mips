@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel", "numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "etar"
+version = "0.1.0"
+description = "Energy-tail-aware reranking for resource-constrained MIPS"
+requires-python = ">=3.10"
+dependencies = ["numpy", "numba", "h5py", "pandas", "tqdm", "psutil", "pyyaml"]
+
+[project.scripts]
+etar-generate-data = "etar.cli:generate_data_main"
+etar-smoke = "etar.cli:smoke_main"
+etar-run = "etar.cli:run_main"
+etar-run-config = "etar.config_runner:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

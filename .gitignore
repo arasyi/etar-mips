@@ -1,0 +1,12 @@
+build/
+src/etar/*.so
+**/__pycache__/
+*.pyc
+.DS_Store
+
+# Local dataset placement; keep the placement instructions.
+data/ann/*
+!data/ann/README.md
+
+# Experiment outputs are generated locally.
+results/

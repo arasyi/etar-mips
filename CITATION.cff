@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this artifact, please cite the WF-IoT 2026 paper."
+title: "WF-IoT 2026 ETAR Reproducibility Artifact"
+type: software
+version: 0.1.0
+authors:
+  - family-names: Rasyidi
+    given-names: Mohammad Arif
+  - family-names: Alhussein
+    given-names: Omar
+preferred-citation:
+  type: conference-paper
+  title: "Index-Free Dynamic Edge Retrieval with Energy-Tail-Aware Partial Scans"
+  authors:
+    - family-names: Rasyidi
+      given-names: Mohammad Arif
+    - family-names: Alhussein
+      given-names: Omar
+  conference:
+    name: "2026 IEEE World Forum on Internet of Things (WF-IoT 2026)"
+  year: 2026

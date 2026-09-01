@@ -1,0 +1,121 @@
+name: wfiot_smoke
+output_dir: results/wfiot_smoke
+seed: 123
+k: 10
+ground_truth_k: 50
+stages: [env, data, online, analyze, tables]
+limits:
+  n: 1000
+  q: 20
+
+datasets:
+  items:
+    - name: wfiot_smoke_dense
+      source: generated
+      kind: dense_gaussian
+      n: 1000
+      d: 64
+      queries: 20
+      seed: 901
+
+benchmarks:
+  methods:
+    - name: exact_f32
+      family: etar
+      method: exact_f32
+      backend: auto
+      modes: [online]
+
+    - name: full_i8_scan
+      family: etar
+      method: full_i8
+      backend: cpp
+      storage_backend: cpp
+      store_float32: false
+      rerank_dtype: int8
+      scan_dtype: int8
+      scan_quantization: row
+      scan_layout: column
+      r: 10
+      rerank: false
+      storage_preset: "8-shared"
+      query_mode: int8
+      modes: [online]
+
+    - name: etar_reference
+      family: etar
+      method: etar
+      backend: cpp
+      storage_backend: cpp
+      storage_preset: "8+32"
+      store_residuals: false
+      scan_dtype: int8
+      scan_quantization: row
+      scan_layout: column
+      scan_insert_policy: auto
+      head_policy: energy
+      tail_policy: derived
+      rerank: true
+      r: 50
+      rho: 0.90
+      h_max: 32
+      lambda_tail: 0.75
+      alpha_min: 0.05
+      alpha_max: 0.5
+      query_mode: float
+      modes: [online]
+
+    - name: etar_8p8
+      family: etar
+      method: etar
+      backend: cpp
+      storage_backend: cpp
+      storage_preset: "8+8"
+      store_residuals: false
+      rerank_dtype: int8
+      rerank_query_mode: float
+      scan_dtype: int8
+      scan_quantization: row
+      scan_layout: column
+      scan_insert_policy: auto
+      head_policy: energy
+      tail_policy: derived
+      rerank: true
+      r: 50
+      rho: 0.90
+      h_max: 32
+      lambda_tail: 0.75
+      alpha_min: 0.05
+      alpha_max: 0.5
+      query_mode: float
+      modes: [online]
+
+    - name: faiss_hnsw
+      family: faiss
+      index: hnsw
+      M: 32
+      ef_search: 128
+      modes: [online]
+
+    - name: faiss_ivf
+      family: faiss
+      index: ivf
+      nlist: 64
+      nprobe: 8
+      modes: [online]
+
+    - name: annoy
+      family: annoy
+      trees: 10
+      search_k: -1
+      modes: [online]
+
+    - name: scann
+      family: scann
+      leaves: 50
+      leaves_to_search: 10
+      reorder: 20
+      modes: [online]
+
+dynamic:
+  enabled: false

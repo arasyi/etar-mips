@@ -1,0 +1,150 @@
+name: wfiot_scaling
+output_dir: results/wfiot_scaling
+seed: 777
+k: 10
+ground_truth_k: 10
+stages: [env, data, online, analyze, tables]
+limits:
+  q: 50
+
+datasets:
+  items:
+    - name: wfiot_scaling
+      source: generated_sweep
+      kinds: [dense_gaussian]
+      n_values: [50000, 100000, 250000, 500000, 1000000]
+      d_values: [256]
+      queries: 50
+      seeds: [777]
+
+benchmarks:
+  methods:
+    - name: exact_f32
+      family: etar
+      method: exact_f32
+      backend: auto
+      modes: [online]
+
+    - name: etar_8p32_scaling
+      family: etar
+      method: etar
+      backend: cpp
+      storage_backend: cpp
+      storage_preset: "8+32"
+      store_residuals: false
+      scan_dtype: int8
+      scan_quantization: row
+      scan_layout: column
+      scan_insert_policy: auto
+      scan_initial_capacity_factor: 1.0
+      head_policy: energy
+      tail_policy: derived
+      rerank: true
+      r: 100
+      rho: 0.90
+      h_max: 128
+      lambda_tail: 0.75
+      alpha_min: 0.05
+      alpha_max: 0.5
+      query_mode: float
+      modes: [online]
+
+    - name: etar_8p8_scaling
+      family: etar
+      method: etar
+      backend: cpp
+      storage_backend: cpp
+      storage_preset: "8+8"
+      store_residuals: false
+      rerank_dtype: int8
+      rerank_query_mode: float
+      scan_dtype: int8
+      scan_quantization: row
+      scan_layout: column
+      scan_insert_policy: auto
+      scan_initial_capacity_factor: 1.0
+      head_policy: energy
+      tail_policy: derived
+      rerank: true
+      r: 100
+      rho: 0.90
+      h_max: 128
+      lambda_tail: 0.75
+      alpha_min: 0.05
+      alpha_max: 0.5
+      query_mode: float
+      modes: [online]
+
+    - name: etar_8p32_scaling_high_recall
+      family: etar
+      method: etar
+      backend: cpp
+      storage_backend: cpp
+      storage_preset: "8+32"
+      store_residuals: false
+      scan_dtype: int8
+      scan_quantization: row
+      scan_layout: column
+      scan_insert_policy: auto
+      scan_initial_capacity_factor: 1.0
+      head_policy: energy
+      tail_policy: derived
+      rerank: true
+      r: 200
+      rho: 0.96
+      h_max: 192
+      lambda_tail: 0.75
+      alpha_min: 0.05
+      alpha_max: 0.5
+      query_mode: float
+      modes: [online]
+
+    - name: etar_8p8_scaling_high_recall
+      family: etar
+      method: etar
+      backend: cpp
+      storage_backend: cpp
+      storage_preset: "8+8"
+      store_residuals: false
+      rerank_dtype: int8
+      rerank_query_mode: float
+      scan_dtype: int8
+      scan_quantization: row
+      scan_layout: column
+      scan_insert_policy: auto
+      scan_initial_capacity_factor: 1.0
+      head_policy: energy
+      tail_policy: derived
+      rerank: true
+      r: 200
+      rho: 0.96
+      h_max: 192
+      lambda_tail: 0.75
+      alpha_min: 0.05
+      alpha_max: 0.5
+      query_mode: float
+      modes: [online]
+
+    - name: faiss_hnsw
+      family: faiss
+      index: hnsw
+      M: 32
+      ef_search: 128
+      modes: [online]
+
+    - name: hnswlib
+      family: hnswlib
+      M: 32
+      ef_construction: 200
+      ef_search: 512
+      modes: [online]
+
+    - name: faiss_ivf
+      family: faiss
+      index: ivf
+      nlist: 512
+      nprobe: 256
+      modes: [online]
+
+dynamic:
+  enabled: false

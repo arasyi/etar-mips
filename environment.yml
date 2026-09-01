@@ -1,0 +1,18 @@
+name: etar-wfiot
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - numba
+  - h5py
+  - pandas
+  - pyyaml
+  - psutil
+  - tqdm
+  - faiss-cpu
+  - pip
+  - pip:
+      - annoy
+      - hnswlib
+      - scann

@@ -1,0 +1,154 @@
+name: wfiot_dynamic
+output_dir: results/wfiot_dynamic
+seed: 123
+k: 10
+stages: [dynamic]
+
+dynamic:
+  enabled: true
+  workloads:
+    - name: append_only_growth
+      type: append_only
+      regime: stream_drift
+      initial_n: 50000
+      stream_n: 5000
+      d: 256
+      queries: 1000
+      steps: 5000
+      seed: 401
+      recall_every: 250
+      eval_after_events: [insert, rebuild]
+      eval_every_mutations: 250
+      eval_query_count: 25
+      eval_query_seed: 1401
+      operation_mix: {query: 0.85, insert: 0.15}
+      k: 10
+      etar: &etar_dynamic
+        backend: cpp
+        storage_backend: cpp
+        storage_preset: "8+32"
+        store_residuals: false
+        method: etar
+        scan_dtype: int8
+        scan_quantization: row
+        scan_layout: column
+        scan_insert_policy: auto
+        r: 100
+        rho: 0.96
+        h_max: 128
+        lambda_tail: 0.75
+        alpha_min: 0.05
+        alpha_max: 0.5
+        query_mode: float
+        omega_update_policy: exact_live
+        compact_every: 0
+        compact_on_delete: true
+        compact_tombstone_fraction: 0.10
+        compact_min_tombstones: 1024
+      methods: &dynamic_methods
+        - name: etar_8p32
+        - name: etar_8p8
+          storage_preset: "8+8"
+          rerank_dtype: int8
+          rerank_query_mode: float
+        - name: faiss_hnsw
+          M: 32
+          ef_search: 128
+          overfetch: 10
+          rebuild_after_mutations: 500
+        - name: hnswlib
+          M: 32
+          ef_construction: 200
+          ef_search: 512
+        - name: faiss_ivf
+          nlist: 512
+          nprobe: 256
+          overfetch: 10
+          rebuild_after_mutations: 500
+
+    - name: query_heavy_drift
+      type: mixed
+      regime: stream_drift
+      initial_n: 50000
+      stream_n: 5000
+      d: 256
+      queries: 1000
+      steps: 5000
+      seed: 402
+      recall_every: 250
+      eval_after_events: [insert, update, delete, compact, rebuild]
+      eval_every_mutations: 250
+      eval_query_count: 25
+      eval_query_seed: 1402
+      operation_mix: {query: 0.95, insert: 0.03, update: 0.01, delete: 0.01}
+      victim_policy: fifo
+      k: 10
+      etar:
+        <<: *etar_dynamic
+      methods: *dynamic_methods
+
+    - name: balanced_churn
+      type: mixed
+      regime: norm_heavy
+      initial_n: 50000
+      stream_n: 5000
+      d: 256
+      queries: 1000
+      steps: 5000
+      seed: 403
+      recall_every: 250
+      eval_after_events: [insert, update, delete, compact, rebuild]
+      eval_every_mutations: 250
+      eval_query_count: 25
+      eval_query_seed: 1403
+      operation_mix: {query: 0.70, insert: 0.10, update: 0.10, delete: 0.10}
+      victim_policy: random
+      k: 10
+      etar:
+        <<: *etar_dynamic
+      methods: *dynamic_methods
+
+    - name: burst_ingest
+      type: burst_ingest
+      regime: bursty_events
+      initial_n: 50000
+      stream_n: 5000
+      d: 256
+      queries: 1000
+      steps: 5000
+      seed: 404
+      recall_every: 250
+      eval_after_events: [insert, update, delete, compact, rebuild]
+      eval_every_mutations: 250
+      eval_query_count: 25
+      eval_query_seed: 1404
+      query_mix: {query: 0.92, insert: 0.04, update: 0.02, delete: 0.02}
+      burst_mix: {query: 0.20, insert: 0.70, update: 0.05, delete: 0.05}
+      burst_every: 500
+      burst_steps: 100
+      victim_policy: random
+      k: 10
+      etar:
+        <<: *etar_dynamic
+      methods: *dynamic_methods
+
+    - name: sliding_window
+      type: sliding_window
+      regime: stream_drift
+      initial_n: 50000
+      stream_n: 5000
+      d: 256
+      queries: 1000
+      steps: 5000
+      seed: 405
+      window_size: 50000
+      recall_every: 250
+      eval_after_events: [insert, delete, compact, rebuild]
+      eval_every_mutations: 250
+      eval_query_count: 25
+      eval_query_seed: 1405
+      victim_policy: fifo
+      k: 10
+      etar:
+        <<: *etar_dynamic
+      methods: *dynamic_methods
