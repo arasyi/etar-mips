@@ -1,8 +1,10 @@
 # WF-IoT 2026 ETAR Reproducibility Artifact
 
+[![arXiv](https://img.shields.io/badge/arXiv-2609.01820-b31b1b.svg)](https://arxiv.org/abs/2606.23136)
+
 This repository contains the artifact for the accepted WF-IoT 2026 paper:
 
-> Index-Free Dynamic Edge Retrieval with Energy-Tail-Aware Partial Scans
+> [Index-Free Dynamic Edge Retrieval with Energy-Tail-Aware Partial Scans](https://arxiv.org/abs/2609.01820)
 
 It provides the ETAR implementation, experiment configurations, five-repeat reproduction workflow, and Android benchmark. Experiment outputs are generated locally under `results/` and are not committed.
 
