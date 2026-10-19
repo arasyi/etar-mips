@@ -1,6 +1,6 @@
 # WF-IoT 2026 ETAR Reproducibility Artifact
 
-[![arXiv](https://img.shields.io/badge/arXiv-2609.01820-b31b1b.svg)](https://arxiv.org/abs/2606.23136)
+[![arXiv](https://img.shields.io/badge/arXiv-2609.01820-b31b1b.svg)](https://arxiv.org/abs/2609.01820)
 
 This repository contains the artifact for the accepted WF-IoT 2026 paper:
 
